@@ -62,7 +62,13 @@ export class APIClientManagerAPI {
     const requestOptions = this.#getConfig()?.requestOptions;
     const futureFlags = this.#getConfig()?.future;
 
-    return new ApiClient(this.baseURL, this.accessToken, this.branchName, requestOptions, futureFlags);
+    return new ApiClient(
+      this.baseURL,
+      this.accessToken,
+      this.branchName,
+      requestOptions,
+      futureFlags
+    );
   }
 
   clientOrThrow(config?: ApiClientConfiguration): ApiClient {
@@ -78,6 +84,21 @@ export class APIClientManagerAPI {
     const futureFlags = config?.future ?? this.#getConfig()?.future;
 
     return new ApiClient(baseURL, accessToken, branchName, requestOptions, futureFlags);
+  }
+
+  // Precedence: per-call version > scoped ApiClientConfiguration.version > TRIGGER_VERSION env var.
+  // null at any level means "unpin" (omit lockToVersion). undefined falls through.
+  resolveLockToVersion(callVersion?: string | null): string | undefined {
+    if (callVersion !== undefined) {
+      return callVersion === null ? undefined : callVersion;
+    }
+
+    const scopedVersion = this.#getConfig()?.version;
+    if (scopedVersion !== undefined) {
+      return scopedVersion === null ? undefined : scopedVersion;
+    }
+
+    return getEnvVar("TRIGGER_VERSION");
   }
 
   runWithConfig<R extends (...args: any[]) => Promise<any>>(
