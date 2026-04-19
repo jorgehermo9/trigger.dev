@@ -14,6 +14,11 @@ export type ApiClientConfiguration = {
    * The preview branch name (for preview environments)
    */
   previewBranch?: string;
+  /**
+   * Pin or unpin task triggers in this scope. A string pins to that version,
+   * `null` skips version locking (ignores TRIGGER_VERSION), undefined falls through.
+   */
+  version?: string | null;
   requestOptions?: ApiRequestOptions;
   future?: ApiClientFutureFlags;
 };

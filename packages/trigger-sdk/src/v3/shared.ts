@@ -10,7 +10,6 @@ import {
   createErrorTaskError,
   defaultRetryOptions,
   flattenIdempotencyKey,
-  getEnvVar,
   getIdempotencyKeyOptions,
   getSchemaParseFn,
   InitOutput,
@@ -650,7 +649,7 @@ export async function batchTriggerById<TTask extends AnyTask>(
             machine: item.options?.machine,
             priority: item.options?.priority,
             region: item.options?.region,
-            lockToVersion: item.options?.version ?? getEnvVar("TRIGGER_VERSION"),
+            lockToVersion: apiClientManager.resolveLockToVersion(item.options?.version),
             debounce: item.options?.debounce,
           },
         };
@@ -938,7 +937,10 @@ export async function batchTriggerByIdAndWait<TTask extends AnyTask>(
           ctx,
         });
 
-        const runs = await handleBatchTaskRunExecutionResultV2(result.items, response.taskIdentifiers);
+        const runs = await handleBatchTaskRunExecutionResultV2(
+          result.items,
+          response.taskIdentifiers
+        );
 
         return {
           id: result.id,
@@ -982,7 +984,10 @@ export async function batchTriggerByIdAndWait<TTask extends AnyTask>(
           ctx,
         });
 
-        const runs = await handleBatchTaskRunExecutionResultV2(result.items, response.taskIdentifiers);
+        const runs = await handleBatchTaskRunExecutionResultV2(
+          result.items,
+          response.taskIdentifiers
+        );
 
         return {
           id: result.id,
@@ -1166,7 +1171,7 @@ export async function batchTriggerTasks<TTasks extends readonly AnyTask[]>(
             machine: item.options?.machine,
             priority: item.options?.priority,
             region: item.options?.region,
-            lockToVersion: item.options?.version ?? getEnvVar("TRIGGER_VERSION"),
+            lockToVersion: apiClientManager.resolveLockToVersion(item.options?.version),
             debounce: item.options?.debounce,
           },
         };
@@ -1459,7 +1464,10 @@ export async function batchTriggerAndWaitTasks<TTasks extends readonly AnyTask[]
           ctx,
         });
 
-        const runs = await handleBatchTaskRunExecutionResultV2(result.items, response.taskIdentifiers);
+        const runs = await handleBatchTaskRunExecutionResultV2(
+          result.items,
+          response.taskIdentifiers
+        );
 
         return {
           id: result.id,
@@ -1506,7 +1514,10 @@ export async function batchTriggerAndWaitTasks<TTasks extends readonly AnyTask[]
           ctx,
         });
 
-        const runs = await handleBatchTaskRunExecutionResultV2(result.items, response.taskIdentifiers);
+        const runs = await handleBatchTaskRunExecutionResultV2(
+          result.items,
+          response.taskIdentifiers
+        );
 
         return {
           id: result.id,
@@ -1830,7 +1841,7 @@ async function* transformBatchItemsStream<TTask extends AnyTask>(
         machine: item.options?.machine,
         priority: item.options?.priority,
         region: item.options?.region,
-        lockToVersion: item.options?.version ?? getEnvVar("TRIGGER_VERSION"),
+        lockToVersion: apiClientManager.resolveLockToVersion(item.options?.version),
         debounce: item.options?.debounce,
       },
     };
@@ -1933,7 +1944,7 @@ async function* transformBatchByTaskItemsStream<TTasks extends readonly AnyTask[
         machine: item.options?.machine,
         priority: item.options?.priority,
         region: item.options?.region,
-        lockToVersion: item.options?.version ?? getEnvVar("TRIGGER_VERSION"),
+        lockToVersion: apiClientManager.resolveLockToVersion(item.options?.version),
         debounce: item.options?.debounce,
       },
     };
@@ -2037,7 +2048,7 @@ async function* transformSingleTaskBatchItemsStream<TPayload>(
         machine: item.options?.machine,
         priority: item.options?.priority,
         region: item.options?.region,
-        lockToVersion: item.options?.version ?? getEnvVar("TRIGGER_VERSION"),
+        lockToVersion: apiClientManager.resolveLockToVersion(item.options?.version),
         debounce: item.options?.debounce,
       },
     };
@@ -2146,7 +2157,7 @@ async function trigger_internal<TRunTypes extends AnyRunTypes>(
         machine: options?.machine,
         priority: options?.priority,
         region: options?.region,
-        lockToVersion: options?.version ?? getEnvVar("TRIGGER_VERSION"),
+        lockToVersion: apiClientManager.resolveLockToVersion(options?.version),
         debounce: options?.debounce,
       },
     },
@@ -2232,7 +2243,7 @@ async function batchTrigger_internal<TRunTypes extends AnyRunTypes>(
             machine: item.options?.machine,
             priority: item.options?.priority,
             region: item.options?.region,
-            lockToVersion: item.options?.version ?? getEnvVar("TRIGGER_VERSION"),
+            lockToVersion: apiClientManager.resolveLockToVersion(item.options?.version),
           },
         };
       })
